@@ -1,0 +1,52 @@
+@import "./tokens.css";
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-brand: var(--brand);
+  --color-leaf: var(--leaf);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-pending: var(--pending);
+  --color-pending-soft: var(--pending-soft);
+  --color-attention: var(--attention);
+  --color-attention-soft: var(--attention-soft);
+  --color-dock: var(--dock);
+  --color-on-dock: var(--on-dock);
+  --color-on-dock-2: var(--on-dock-2);
+  --color-cat-1: var(--cat-1); --color-cat-1-soft: var(--cat-1-soft);
+  --color-cat-2: var(--cat-2); --color-cat-2-soft: var(--cat-2-soft);
+  --color-cat-3: var(--cat-3); --color-cat-3-soft: var(--cat-3-soft);
+  --color-cat-4: var(--cat-4); --color-cat-4-soft: var(--cat-4-soft);
+  --color-cat-5: var(--cat-5); --color-cat-5-soft: var(--cat-5-soft);
+  --color-cat-6: var(--cat-6); --color-cat-6-soft: var(--cat-6-soft);
+
+  --font-sans: Manrope, system-ui, -apple-system, sans-serif;
+
+  --text-figure-xl: 72px; --text-figure-xl--line-height: 76px; --text-figure-xl--letter-spacing: -0.045em; --text-figure-xl--font-weight: 300;
+  --text-figure-l: 34px; --text-figure-l--line-height: 40px; --text-figure-l--letter-spacing: -0.03em; --text-figure-l--font-weight: 300;
+  --text-figure: 15px; --text-figure--line-height: 22px; --text-figure--font-weight: 600;
+  --text-title: 26px; --text-title--line-height: 32px; --text-title--letter-spacing: -0.02em; --text-title--font-weight: 600;
+  --text-heading: 16px; --text-heading--line-height: 22px; --text-heading--font-weight: 700;
+  --text-body: 14px; --text-body--line-height: 20px; --text-body--font-weight: 500;
+  --text-meta: 13px; --text-meta--line-height: 18px; --text-meta--font-weight: 500;
+  --text-caption: 11px; --text-caption--line-height: 14px; --text-caption--letter-spacing: 0.08em; --text-caption--font-weight: 700;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-dock: var(--shadow-dock);
+
+  --container-page: 1180px;
+}

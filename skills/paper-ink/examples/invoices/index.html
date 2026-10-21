@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invoices · Varga Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../tokens.css">
+  <link rel="stylesheet" href="../../paper-ink.css">
+  <link rel="stylesheet" href="invoices.css">
+</head>
+<body>
+  <nav class="dock" aria-label="Main">
+    <a href="#">Overview</a>
+    <a href="#" aria-current="page">Invoices</a>
+    <a href="#">Clients</a>
+    <a href="#">Time</a>
+    <span class="sep"></span>
+    <button class="search-trigger" type="button">⌘K Search</button>
+    <button class="add" type="button" aria-label="New invoice">+</button>
+  </nav>
+
+  <main class="page">
+    <header class="page-head">
+      <div class="hero">
+        <div class="caption">Outstanding</div>
+        <div class="figure-xl" id="hero-figure"></div>
+        <div class="meta" id="hero-meta"></div>
+        <div class="split" id="split" aria-hidden="true"></div>
+        <div class="split-legend meta" id="split-legend"></div>
+      </div>
+      <button class="btn btn-primary" type="button">New invoice</button>
+    </header>
+
+    <div class="workspace">
+      <section aria-label="Invoices">
+        <div class="filters">
+          <div class="segmented" role="tablist" aria-label="Status" id="status-filter"></div>
+          <div class="select-wrap">
+            <label class="sr-only" for="client-filter">Client</label>
+            <select class="input" id="client-filter">
+              <option value="">All clients</option>
+            </select>
+          </div>
+          <label class="sr-only" for="search">Search invoices</label>
+          <input class="input search" id="search" type="search" placeholder="Search number, client or project">
+        </div>
+        <div class="list-meta">
+          <span class="caption">By due date</span>
+          <span class="meta" id="list-total"></span>
+        </div>
+        <ul class="ledger" id="ledger"></ul>
+      </section>
+
+      <aside class="sheet detail" id="detail" aria-label="Invoice detail" aria-live="polite"></aside>
+    </div>
+  </main>
+  <div class="scrim" id="scrim"></div>
+
+  <script>
+    const TODAY = new Date(2026, 9, 22);
+    const VAT = 0.21;
+
+    const clients = {
+      hollis: { name: 'Hollis & Rowe Architects', contact: 'Dana Hollis', email: 'dana@hollisrowe.nl', cat: 1 },
+      kettle: { name: 'Kettle & Crane Coffee', contact: 'Marco Teixeira', email: 'marco@kettlecrane.com', cat: 2 },
+      ostra: { name: 'Ostra Health', contact: 'Priya Raman', email: 'priya.raman@ostrahealth.eu', cat: 3 },
+      fernhill: { name: 'Fernhill Books', contact: 'Tom Fernhill', email: 'tom@fernhillbooks.co.uk', cat: 4 },
+      juniper: { name: 'Juniper Labs', contact: 'Sanne de Wit', email: 'sanne@juniperlabs.io', cat: 5 },
+      tidewater: { name: 'Tidewater Festival', contact: 'Joris Bakker', email: 'joris@tidewaterfest.nl', cat: 6 },
+    };
+
+    const invoices = [
+      { id: 'INV-2026-041', client: 'kettle', project: 'Packaging refresh', issued: '2026-08-20', due: '2026-09-03', status: 'paid', paidOn: '2026-09-01',
+        items: [['Packaging design, 3 SKUs', 3, 850], ['Print preparation (hours)', 6, 85]],
+        events: [['2026-08-20', 'Sent to Marco Teixeira'], ['2026-08-21', 'Viewed'], ['2026-09-01', 'Paid by bank transfer']] },
+      { id: 'INV-2026-042', client: 'hollis', project: 'Website illustrations', issued: '2026-09-01', due: '2026-09-15', status: 'paid', paidOn: '2026-09-12',
+        items: [['Spot illustrations', 12, 180]],
+        events: [['2026-09-01', 'Sent to Dana Hollis'], ['2026-09-02', 'Viewed'], ['2026-09-12', 'Paid by bank transfer']] },
+      { id: 'INV-2026-043', client: 'fernhill', project: 'Cover design, The Salt Year', issued: '2026-09-10', due: '2026-09-24', status: 'sent',
+        items: [['Cover design, hardback and ebook', 1, 1400], ['Revisions (hours)', 4, 85]],
+        events: [['2026-09-10', 'Sent to Tom Fernhill'], ['2026-09-14', 'Viewed'], ['2026-10-01', 'Reminder sent'], ['2026-10-15', 'Reminder sent']] },
+      { id: 'INV-2026-044', client: 'ostra', project: 'App onboarding screens', issued: '2026-09-22', due: '2026-10-06', status: 'paid', paidOn: '2026-10-05',
+        items: [['UI design (hours)', 32, 95]],
+        events: [['2026-09-22', 'Sent to Priya Raman'], ['2026-09-22', 'Viewed'], ['2026-10-05', 'Paid by bank transfer']] },
+      { id: 'INV-2026-045', client: 'juniper', project: 'Brand workshop', issued: '2026-09-29', due: '2026-10-13', status: 'sent',
+        items: [['Workshop day, on site', 1, 1200], ['Preparation (hours)', 5, 95]],
+        events: [['2026-09-29', 'Sent to Sanne de Wit'], ['2026-10-02', 'Viewed']] },
+      { id: 'INV-2026-046', client: 'kettle', project: 'Café menu boards', issued: '2026-10-02', due: '2026-10-16', status: 'paid', paidOn: '2026-10-20',
+        items: [['Menu board design', 4, 220]],
+        events: [['2026-10-02', 'Sent to Marco Teixeira'], ['2026-10-03', 'Viewed'], ['2026-10-20', 'Paid by bank transfer']] },
+      { id: 'INV-2026-047', client: 'tidewater', project: 'Festival poster series', issued: '2026-10-05', due: '2026-10-19', status: 'paid', paidOn: '2026-10-19',
+        items: [['Poster design', 3, 650], ['Usage licence, 12 months', 1, 400]],
+        events: [['2026-10-05', 'Sent to Joris Bakker'], ['2026-10-06', 'Viewed'], ['2026-10-19', 'Paid by card']] },
+      { id: 'INV-2026-048', client: 'hollis', project: 'Annual report layout', issued: '2026-10-12', due: '2026-10-26', status: 'sent',
+        items: [['Report layout (pages)', 40, 45], ['Infographics', 6, 120]],
+        events: [['2026-10-12', 'Sent to Dana Hollis'], ['2026-10-13', 'Viewed']] },
+      { id: 'INV-2026-049', client: 'ostra', project: 'Design system documentation', issued: '2026-10-15', due: '2026-10-29', status: 'sent',
+        items: [['Documentation and component specs (hours)', 24, 95]],
+        events: [['2026-10-15', 'Sent to Priya Raman'], ['2026-10-16', 'Viewed']] },
+      { id: 'INV-2026-050', client: 'fernhill', project: 'Spring catalogue', issued: '2026-10-20', due: '2026-11-03', status: 'sent',
+        items: [['Catalogue layout (pages)', 24, 55]],
+        events: [['2026-10-20', 'Sent to Tom Fernhill']] },
+      { id: 'INV-2026-051', client: 'tidewater', project: 'Wayfinding signage', issued: null, due: '2026-11-12', status: 'draft',
+        items: [['Sign design', 18, 75], ['Site visit, Scheveningen', 1, 250]],
+        events: [['2026-10-21', 'Draft created']] },
+      { id: 'INV-2026-052', client: 'juniper', project: 'Logo refinement', issued: null, due: '2026-11-19', status: 'draft',
+        items: [['Logo refinement (hours)', 10, 95]],
+        events: [['2026-10-22', 'Draft created']] },
+    ];
+
+    const money = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' });
+    const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+    const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const daysFrom = s => Math.round((parse(s) - TODAY) / 86400000);
+    const shortDate = s => parse(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const longDate = s => (s ? parse(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+    const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+    const subtotal = inv => inv.items.reduce((sum, [, qty, rate]) => sum + qty * rate, 0);
+    const total = inv => Math.round(subtotal(inv) * (1 + VAT) * 100) / 100;
+    const state = inv => inv.status === 'sent' && daysFrom(inv.due) < 0 ? 'overdue' : inv.status;
+
+    const relativeDue = inv => {
+      const d = daysFrom(inv.due);
+      if (d === 0) return 'due today';
+      if (d === 1) return 'due tomorrow';
+      if (d > 1) return d <= 14 ? `due in ${d} days` : `due ${shortDate(inv.due)}`;
+      return `${plural(-d, 'day')} overdue`;
+    };
+
+    const badge = inv => {
+      const s = state(inv);
+      if (s === 'paid') return '<span class="badge badge-positive">Paid</span>';
+      if (s === 'overdue') return '<span class="badge badge-attention">Overdue</span>';
+      if (s === 'draft') return '<span class="badge badge-pending">Draft</span>';
+      return '<span class="badge badge-muted">Sent</span>';
+    };
+
+    const withFraction = amount => {
+      const text = money.format(amount);
+      const cut = text.lastIndexOf('.');
+      return `${text.slice(0, cut)}<span class="fraction">${text.slice(cut)}</span>`;
+    };
+
+    const statusFilters = [
+      ['all', 'All', () => true],
+      ['overdue', 'Overdue', inv => state(inv) === 'overdue'],
+      ['open', 'Open', inv => state(inv) === 'sent'],
+      ['draft', 'Drafts', inv => state(inv) === 'draft'],
+      ['paid', 'Paid', inv => state(inv) === 'paid'],
+    ];
+
+    const view = { status: 'all', client: '', query: '', selected: 'INV-2026-043' };
+
+    const el = id => document.getElementById(id);
+    const ledger = el('ledger');
+    const detail = el('detail');
+    const scrim = el('scrim');
+
+    function renderHero() {
+      const unpaid = invoices.filter(inv => inv.status === 'sent');
+      const overdue = unpaid.filter(inv => state(inv) === 'overdue');
+      const soon = unpaid.filter(inv => state(inv) === 'sent' && daysFrom(inv.due) <= 14);
+      const outstanding = unpaid.reduce((s, inv) => s + total(inv), 0);
+      const overdueSum = overdue.reduce((s, inv) => s + total(inv), 0);
+      el('hero-figure').innerHTML = withFraction(outstanding);
+      el('hero-meta').textContent = overdue.length
+        ? `${money.format(overdueSum)} overdue on ${plural(overdue.length, 'invoice')} · ${soon.length} more due in the next two weeks`
+        : `Nothing overdue · ${soon.length} due in the next two weeks`;
+
+      const paidOct = invoices.filter(inv => inv.status === 'paid' && inv.paidOn >= '2026-10-01').reduce((s, inv) => s + total(inv), 0);
+      const share = paidOct / (paidOct + outstanding);
+      el('split').innerHTML = `<span class="paid" style="flex:${share}"></span><span class="open" style="flex:${1 - share}"></span>`;
+      el('split-legend').innerHTML = `<span>${money.format(paidOct)} paid in October</span><span class="quiet">${money.format(outstanding)} still to come</span>`;
+    }
+
+    function renderFilters() {
+      el('status-filter').innerHTML = statusFilters.map(([key, label, test]) =>
+        `<button role="tab" type="button" data-status="${key}" aria-selected="${view.status === key}">${label}<span class="count">${invoices.filter(test).length}</span></button>`
+      ).join('');
+    }
+
+    function visibleInvoices() {
+      const test = statusFilters.find(([key]) => key === view.status)[2];
+      const q = view.query.trim().toLowerCase();
+      return invoices
+        .filter(test)
+        .filter(inv => !view.client || inv.client === view.client)
+        .filter(inv => !q || [inv.id, inv.project, clients[inv.client].name].some(v => v.toLowerCase().includes(q)))
+        .sort((a, b) => a.due.localeCompare(b.due));
+    }
+
+    function row(inv) {
+      const c = clients[inv.client];
+      const s = state(inv);
+      const past = s === 'paid' && daysFrom(inv.due) < 0;
+      const meta = s === 'paid' ? `${inv.id} · paid ${shortDate(inv.paidOn)}` : `${inv.id} · ${inv.project} · ${relativeDue(inv)}`;
+      return `<li><button type="button" class="ledger-row${past ? ' past' : ''}" data-id="${inv.id}" aria-current="${view.selected === inv.id}">
+        <span class="when">${shortDate(inv.due)}</span>
+        <span class="tile${s === 'draft' ? ' tile-pending' : ''}" data-cat="${c.cat}" aria-hidden="true">${c.name[0]}</span>
+        <span class="who"><span class="name">${c.name}</span><span class="meta">${meta}</span></span>
+        <span class="leader"></span>
+        ${badge(inv)}
+        <span class="value">${money.format(total(inv))}</span>
+      </button></li>`;
+    }
+
+    function renderList() {
+      const list = visibleInvoices();
+      el('list-total').textContent = `${plural(list.length, 'invoice')} · ${money.format(list.reduce((s, inv) => s + total(inv), 0))}`;
+      if (!list.length) {
+        ledger.innerHTML = `<li class="empty"><p class="heading">No invoices match</p><p>Try another status or client, or clear the search.</p><button class="btn" type="button" data-clear>Clear filters</button></li>`;
+        return;
+      }
+      const before = list.filter(inv => daysFrom(inv.due) < 0);
+      const after = list.filter(inv => daysFrom(inv.due) >= 0);
+      ledger.innerHTML = before.map(row).join('')
+        + (before.length && after.length ? '<li class="ledger-today caption">Today</li>' : '')
+        + after.map(row).join('');
+    }
+
+    function actionsFor(inv) {
+      const s = state(inv);
+      if (s === 'draft') return `<button class="btn" type="button" data-action="send">Send invoice</button><button class="btn" type="button">Edit</button><button class="btn btn-danger" type="button">Delete draft</button>`;
+      if (s === 'paid') return `<button class="btn" type="button">Download PDF</button><button class="btn" type="button">Duplicate</button>`;
+      return `<button class="btn" type="button" data-action="remind">Send reminder</button><button class="btn" type="button" data-action="paid">Mark as paid</button><button class="btn" type="button">Download PDF</button>`;
+    }
+
+    function renderDetail() {
+      const inv = invoices.find(i => i.id === view.selected);
+      if (!inv) {
+        detail.innerHTML = '<div class="empty"><p class="heading">No invoice selected</p><p>Pick an invoice from the list to see its lines and history.</p></div>';
+        return;
+      }
+      const c = clients[inv.client];
+      const s = state(inv);
+      const sub = subtotal(inv);
+      const statusLine = {
+        paid: `Paid ${longDate(inv.paidOn)}`,
+        overdue: `Was due ${longDate(inv.due)} · ${relativeDue(inv)}`,
+        sent: `Due ${longDate(inv.due)} · ${relativeDue(inv)}`,
+        draft: `Not sent yet · planned due date ${longDate(inv.due)}`,
+      }[s];
+      const reminders = inv.events.filter(([, t]) => t === 'Reminder sent').length;
+
+      detail.innerHTML = `
+        <div class="detail-head">
+          <span class="tile${s === 'draft' ? ' tile-pending' : ''}" data-cat="${c.cat}" aria-hidden="true">${c.name[0]}</span>
+          <div class="who">
+            <p class="heading">${c.name}</p>
+            <div class="meta">${inv.id} · ${inv.project}</div>
+          </div>
+          <button class="btn close" type="button" data-close aria-label="Close detail">Close</button>
+        </div>
+
+        <div class="detail-total">
+          <div class="caption">Total incl. VAT</div>
+          <div class="figure-l">${withFraction(total(inv))}</div>
+          <div class="status">${badge(inv)}<span class="meta">${statusLine}</span></div>
+        </div>
+        ${s === 'overdue' ? `<div class="notice">${reminders ? `${plural(reminders, 'reminder')} sent so far. A short personal note to ${c.contact.split(' ')[0]} often works better than another automatic one.` : `No reminder sent yet. ${c.contact.split(' ')[0]} viewed it on ${shortDate(inv.events.find(([, t]) => t === 'Viewed')?.[0] || inv.issued)}.`}</div>` : ''}
+
+        <dl class="facts">
+          <div><dt>Billed to</dt><dd>${c.contact}<br><span class="meta">${c.email}</span></dd></div>
+          <div><dt>Terms</dt><dd>14 days<br><span class="meta">Bank transfer or card</span></dd></div>
+          <div><dt>Issued</dt><dd>${inv.issued ? longDate(inv.issued) : '<span class="quiet">Not yet</span>'}</dd></div>
+          <div><dt>Due</dt><dd>${longDate(inv.due)}</dd></div>
+        </dl>
+
+        <section>
+          <span class="caption">Lines</span>
+          <ul class="lines">
+            ${inv.items.map(([desc, qty, rate]) => `<li><span>${desc}<br><span class="meta">${qty} × ${money.format(rate)}</span></span><span class="amount">${money.format(qty * rate)}</span></li>`).join('')}
+          </ul>
+          <div class="sums">
+            <div class="meta"><span>Subtotal</span><span class="leader"></span><span>${money.format(sub)}</span></div>
+            <div class="meta"><span>VAT 21%</span><span class="leader"></span><span>${money.format(total(inv) - sub)}</span></div>
+            <div class="total"><span>Total</span><span class="leader"></span><span class="figure">${money.format(total(inv))}</span></div>
+          </div>
+        </section>
+
+        <section>
+          <span class="caption">History</span>
+          <ul class="activity">
+            ${inv.events.slice().reverse().map(([d, text]) => `<li><span class="meta">${shortDate(d)}</span><span>${text}</span></li>`).join('')}
+          </ul>
+        </section>
+
+        <div class="actions">${actionsFor(inv)}</div>`;
+    }
+
+    function render() {
+      renderHero();
+      renderFilters();
+      renderList();
+      renderDetail();
+    }
+
+    function openSheet(open) {
+      detail.classList.toggle('open', open);
+      scrim.classList.toggle('open', open);
+    }
+
+    el('status-filter').addEventListener('click', e => {
+      const btn = e.target.closest('[data-status]');
+      if (!btn) return;
+      view.status = btn.dataset.status;
+      renderFilters();
+      renderList();
+    });
+
+    const clientSelect = el('client-filter');
+    Object.entries(clients).sort((a, b) => a[1].name.localeCompare(b[1].name)).forEach(([key, c]) => clientSelect.add(new Option(c.name, key)));
+    clientSelect.addEventListener('change', () => { view.client = clientSelect.value; renderList(); });
+
+    el('search').addEventListener('input', e => { view.query = e.target.value; renderList(); });
+
+    ledger.addEventListener('click', e => {
+      if (e.target.closest('[data-clear]')) {
+        Object.assign(view, { status: 'all', client: '', query: '' });
+        clientSelect.value = '';
+        el('search').value = '';
+        render();
+        return;
+      }
+      const btn = e.target.closest('.ledger-row');
+      if (!btn) return;
+      view.selected = btn.dataset.id;
+      ledger.querySelectorAll('.ledger-row').forEach(r => r.setAttribute('aria-current', r === btn));
+      renderDetail();
+      openSheet(true);
+    });
+
+    detail.addEventListener('click', e => {
+      if (e.target.closest('[data-close]')) return openSheet(false);
+      const action = e.target.closest('[data-action]')?.dataset.action;
+      const inv = invoices.find(i => i.id === view.selected);
+      if (!action || !inv) return;
+      const today = iso(TODAY);
+      if (action === 'paid') {
+        Object.assign(inv, { status: 'paid', paidOn: today });
+        inv.events.push([today, 'Marked as paid']);
+      }
+      if (action === 'remind') inv.events.push([today, 'Reminder sent']);
+      if (action === 'send') {
+        Object.assign(inv, { status: 'sent', issued: today });
+        inv.events.push([today, `Sent to ${clients[inv.client].contact}`]);
+      }
+      render();
+    });
+
+    scrim.addEventListener('click', () => openSheet(false));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') openSheet(false); });
+
+    render();
+  </script>
+</body>
+</html>

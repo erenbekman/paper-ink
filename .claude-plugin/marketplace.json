@@ -1,0 +1,15 @@
+{
+  "name": "paper-ink",
+  "description": "Paper & Ink, a calm design language for app UI, as a skill for Claude Code and Codex.",
+  "owner": {
+    "name": "Eren Bekman",
+    "url": "https://erenbekman.com"
+  },
+  "plugins": [
+    {
+      "name": "paper-ink",
+      "source": "./",
+      "description": "Calm, paper-like UI for your coding agent."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "paper-ink",
+  "version": "0.1.0",
+  "description": "Calm, paper-like UI for your coding agent: mint-white paper, deep green ink, hairlines instead of boxes, one big number per screen.",
+  "author": { "name": "Eren Bekman", "url": "https://erenbekman.com" },
+  "homepage": "https://github.com/erenbekman/paper-ink",
+  "repository": "https://github.com/erenbekman/paper-ink",
+  "license": "MIT",
+  "keywords": ["design-system", "ui", "skill", "tailwind", "claude-code", "codex"]
+}

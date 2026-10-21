@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Habits · Today</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../tokens.css">
+  <link rel="stylesheet" href="../../paper-ink.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <nav class="dock" aria-label="Main">
+    <a href="#" aria-current="page">Today</a>
+    <a href="#">History</a>
+    <a href="#">Habits</a>
+    <a href="#">Insights</a>
+    <span class="sep"></span>
+    <button class="search">⌘K Search</button>
+    <button class="add" aria-label="New habit">+</button>
+  </nav>
+
+  <main class="page">
+    <section class="hero" aria-labelledby="streak-label">
+      <div class="hero-figure">
+        <div class="caption" id="streak-label">Current streak</div>
+        <div class="figure-xl">23<span class="fraction"> days</span></div>
+        <div class="meta">3 of 6 done today · 2 more keeps the streak going · best was 31 days</div>
+        <div class="segments" role="img" aria-label="3 of 6 habits done today">
+          <span class="done"></span><span class="done"></span><span class="done"></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <button class="btn btn-primary">Log check-in</button>
+    </section>
+
+    <section class="section" aria-labelledby="week-heading">
+      <div class="section-head">
+        <h2 class="heading" id="week-heading">This week</h2>
+        <span class="meta">20 of 24 check-ins so far · 83%</span>
+      </div>
+      <ol class="week">
+        <li class="day past">
+          <span class="caption">Mon</span>
+          <span class="meta">Oct 19</span>
+          <span class="figure">6/6</span>
+          <span class="segments" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span></span>
+        </li>
+        <li class="day past">
+          <span class="caption">Tue</span>
+          <span class="meta">Oct 20</span>
+          <span class="figure">5/6</span>
+          <span class="segments" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span></span></span>
+        </li>
+        <li class="day past">
+          <span class="caption">Wed</span>
+          <span class="meta">Oct 21</span>
+          <span class="figure">6/6</span>
+          <span class="segments" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span></span>
+        </li>
+        <li class="day today" aria-current="date">
+          <span class="caption">Today</span>
+          <span class="meta">Oct 22</span>
+          <span class="figure">3/6</span>
+          <span class="segments" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span></span><span></span><span></span></span>
+        </li>
+        <li class="day upcoming">
+          <span class="caption">Fri</span>
+          <span class="meta">Oct 23</span>
+          <span class="figure">–</span>
+          <span class="segments" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </li>
+        <li class="day upcoming">
+          <span class="caption">Sat</span>
+          <span class="meta">Oct 24</span>
+          <span class="figure">–</span>
+          <span class="segments" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </li>
+        <li class="day upcoming">
+          <span class="caption">Sun</span>
+          <span class="meta">Oct 25</span>
+          <span class="figure">–</span>
+          <span class="segments" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section habits" aria-labelledby="habits-heading">
+      <div class="section-head">
+        <h2 class="heading" id="habits-heading">Habits</h2>
+        <div class="legend meta" aria-hidden="true">
+          <span><span class="dots"><span class="done"></span></span>Done</span>
+          <span><span class="dots"><span class="missed"></span></span>Missed</span>
+          <span><span class="dots"><span class="later"></span></span>Still to do</span>
+          <span class="quiet">Right column: streak</span>
+        </div>
+      </div>
+      <ul class="ledger">
+        <li><button class="ledger-row">
+          <span class="tile" data-cat="2" aria-hidden="true">W</span>
+          <span><span class="name">Drink water</span><span class="meta">2 L a day · 1.4 L so far</span></span>
+          <span class="leader"></span>
+          <span class="dots" role="img" aria-label="Mon to Wed done, today in progress"><span class="done"></span><span class="done"></span><span class="done"></span><span class="later"></span><span class="later"></span><span class="later"></span><span class="later"></span></span>
+          <span class="badge badge-pending status">In progress</span>
+          <span class="value">9 days</span>
+        </button></li>
+        <li><button class="ledger-row">
+          <span class="tile" data-cat="4" aria-hidden="true">R</span>
+          <span><span class="name">Read</span><span class="meta">20 pages · usually around 21:30</span></span>
+          <span class="leader"></span>
+          <span class="dots" role="img" aria-label="Mon to Wed done, today still to do"><span class="done"></span><span class="done"></span><span class="done"></span><span class="later"></span><span class="later"></span><span class="later"></span><span class="later"></span></span>
+          <span class="badge badge-muted status">Tonight</span>
+          <span class="value">23 days</span>
+        </button></li>
+        <li><button class="ledger-row">
+          <span class="tile" data-cat="5" aria-hidden="true">N</span>
+          <span><span class="name">No phone after 22:00</span><span class="meta">Missed Tuesday · back on track</span></span>
+          <span class="leader"></span>
+          <span class="dots" role="img" aria-label="Mon done, Tue missed, Wed done, today still to do"><span class="done"></span><span class="missed"></span><span class="done"></span><span class="later"></span><span class="later"></span><span class="later"></span><span class="later"></span></span>
+          <span class="badge badge-muted status">From 22:00</span>
+          <span class="value">1 day</span>
+        </button></li>
+        <li><button class="ledger-row">
+          <span class="tile" data-cat="3" aria-hidden="true">M</span>
+          <span><span class="name">Meditate</span><span class="meta">10 min · done at 06:45</span></span>
+          <span class="leader"></span>
+          <span class="dots" role="img" aria-label="Mon to today done"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="later"></span><span class="later"></span><span class="later"></span></span>
+          <span class="badge badge-positive status">Done</span>
+          <span class="value">41 days</span>
+        </button></li>
+        <li><button class="ledger-row">
+          <span class="tile" data-cat="1" aria-hidden="true">M</span>
+          <span><span class="name">Morning run</span><span class="meta">3 km · done at 07:10</span></span>
+          <span class="leader"></span>
+          <span class="dots" role="img" aria-label="Mon to today done"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="later"></span><span class="later"></span><span class="later"></span></span>
+          <span class="badge badge-positive status">Done</span>
+          <span class="value">18 days</span>
+        </button></li>
+        <li><button class="ledger-row">
+          <span class="tile" data-cat="6" aria-hidden="true">S</span>
+          <span><span class="name">Spanish practice</span><span class="meta">15 min · done at 12:30</span></span>
+          <span class="leader"></span>
+          <span class="dots" role="img" aria-label="Mon to today done"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="later"></span><span class="later"></span><span class="later"></span></span>
+          <span class="badge badge-positive status">Done</span>
+          <span class="value">27 days</span>
+        </button></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
